@@ -1,6 +1,5 @@
 import { AnswerQuestion } from "client/components/answer-question";
 import { AskQuestion } from "client/components/ask-question";
-import { useAksQuestion, useAnswerQuestion, useGetQuestion } from "client/hooks/use-question-query";
 import { useQuestion } from "client/hooks/use-question";
 import Head from "next/head";
 import { useState } from "react";
@@ -55,12 +54,12 @@ const Home: FC<Props> = ({ askedQuestion, existingAnswer }) => {
         {asking && (
           <>
             <h3>Ask A New Question</h3>
-            <a
+            {currentQuestion && <a
               className={styles.toggle}
               onClick={() => setChangeQuestion(false)}
             >
               Back to Answer
-            </a>
+            </a>}
             <AskQuestion onAsk={onAsk} />
           </>
         )}
