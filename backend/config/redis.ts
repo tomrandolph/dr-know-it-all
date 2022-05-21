@@ -5,7 +5,7 @@ let client: RedisClientType | null = null;
 
 export async function getClient(){
   if(client == null) {
-    client = createClient();
+    client = createClient({password: process.env.REDIS_PW, url: process.env.REDIS_URL});
     await client.connect();
 
   }
