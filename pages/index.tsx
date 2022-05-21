@@ -16,6 +16,8 @@ export async function getServerSideProps(): Promise<{ props: Props }> {
   console.log('Fetching question and answer')
   const askedQuestion = await redis.get("question");
   const existingAnswer = await redis.get("answer");
+  console.log('Got question:', askedQuestion)
+  console.log('Got answer:', existingAnswer)
   return {
     props: {
       askedQuestion,
