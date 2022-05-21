@@ -2,7 +2,7 @@ import { getClient } from "backend/config/redis";
 import { addToAnswer } from "backend/services/answer";
 import { NextApiRequest, NextApiResponse } from "next";
 
-export default async function (req: NextApiRequest, res: NextApiResponse) {
+export default async function handleAnswer(req: NextApiRequest, res: NextApiResponse) {
   const redis = await getClient();
   if (req.method === "PATCH") {
     const { word, version } = req.body;
