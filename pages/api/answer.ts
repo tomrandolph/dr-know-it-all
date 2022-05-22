@@ -29,7 +29,7 @@ export default async function handleAnswer(
     const usersAnswer = answer == null ? word : `${answer} ${word}`;
     Logger.log(word, answer);
     Logger.log("user", usersAnswer);
-    const canMakeRequest = await rateLimit(5);
+    const canMakeRequest = await rateLimit(1);
     if (!canMakeRequest) {
       Logger.log("limiting");
       await redis.set("answer", usersAnswer);
