@@ -42,7 +42,6 @@ const Home: FC<Props> = ({ askedQuestion, existingAnswer }) => {
   const currentAnswer = answer ?? existingAnswer;
   const onAnswer = async (word: string) => {
     const newAnswer = await q.answer(currentAnswer, word);
-    console.log(newAnswer);
     setAnswer(newAnswer);
   };
   const asking = !currentQuestion || changeQuestion;
@@ -78,8 +77,7 @@ const Home: FC<Props> = ({ askedQuestion, existingAnswer }) => {
             >
               Change Question
             </a>
-            <AnswerQuestion onAnswer={onAnswer} />
-            <p>{currentAnswer}</p>
+            <AnswerQuestion onAnswer={onAnswer} answer={currentAnswer} />
           </>
         )}
       </main>
