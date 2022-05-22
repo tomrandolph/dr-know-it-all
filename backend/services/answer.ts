@@ -1,4 +1,5 @@
 import { openai } from "backend/config/openai";
+import { Logger } from "common/logger";
 
 interface AnswerData {
   done: boolean;
@@ -18,8 +19,8 @@ ${existingAnswer}`;
       temperature: 0.8,
     }
   );
-  console.log(prompt);
-  console.log(completion);
+  Logger.log(prompt);
+  Logger.log(completion);
   const choice = completion.choices?.[0];
   if (choice == null) {
     return { answer: existingAnswer, done: true };
@@ -28,7 +29,7 @@ ${existingAnswer}`;
     ?.replace("\n\n", ".")
     .trim()
     .split(" ")[0];
-  console.log("trimmed", trimmedComputedAnswer);
+  Logger.log("trimmed", trimmedComputedAnswer);
   return {
     answer: `${existingAnswer} ${trimmedComputedAnswer}`,
     done: false,
