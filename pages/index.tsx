@@ -6,6 +6,7 @@ import { useState } from "react";
 import styles from "./index.module.css";
 import type { FC } from "react";
 import { getClient } from "backend/config/redis";
+import { Logger } from "common/logger";
 interface Props {
   askedQuestion: string | null;
   existingAnswer: string | null;
