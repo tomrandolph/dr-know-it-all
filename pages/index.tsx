@@ -12,13 +12,13 @@ interface Props {
 }
 
 export async function getServerSideProps(): Promise<{ props: Props }> {
-  console.log('Getting props for home page')
+  console.log("Getting props for home page");
   const redis = await getClient();
-  console.log('Fetching question and answer')
+  console.log("Fetching question and answer");
   const askedQuestion = await redis.get("question");
   const existingAnswer = await redis.get("answer");
-  console.log('Got question:', askedQuestion)
-  console.log('Got answer:', existingAnswer)
+  console.log("Got question:", askedQuestion);
+  console.log("Got answer:", existingAnswer);
   return {
     props: {
       askedQuestion,
@@ -35,7 +35,7 @@ const Home: FC<Props> = ({ askedQuestion, existingAnswer }) => {
   const onAsk = async (question: string) => {
     await q.ask(question);
     setQuestion(question);
-    setAnswer('')
+    setAnswer("");
     setChangeQuestion(false);
   };
   const currentQuestion = question ?? askedQuestion;
@@ -58,12 +58,14 @@ const Home: FC<Props> = ({ askedQuestion, existingAnswer }) => {
         {asking && (
           <>
             <h3>Ask A New Question</h3>
-            {currentQuestion && <a
-              className={styles.toggle}
-              onClick={() => setChangeQuestion(false)}
-            >
-              Back to Answer
-            </a>}
+            {currentQuestion && (
+              <a
+                className={styles.toggle}
+                onClick={() => setChangeQuestion(false)}
+              >
+                Back to Answer
+              </a>
+            )}
             <AskQuestion onAsk={onAsk} />
           </>
         )}

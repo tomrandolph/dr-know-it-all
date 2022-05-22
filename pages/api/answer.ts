@@ -2,7 +2,7 @@ import { getClient } from "backend/config/redis";
 import { addToAnswer } from "backend/services/answer";
 import { NextApiRequest, NextApiResponse } from "next";
 
-// Adds a global rate limit to prevent burning too much usage on openAPI
+// Adds a global rate limit to prevent burning too much usage on openAI
 async function rateLimit(time: number): Promise<boolean> {
   const redis = await getClient();
   const tooSoon = Boolean(await redis.get("limit"));

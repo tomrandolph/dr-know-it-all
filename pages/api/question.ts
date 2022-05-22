@@ -1,7 +1,10 @@
 import { getClient } from "backend/config/redis";
 import { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handleQuestion(req: NextApiRequest, res: NextApiResponse) {
+export default async function handleQuestion(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const redis = await getClient();
   if (req.method === "POST") {
     const { question } = req.body;
