@@ -28,7 +28,7 @@ export default async function handleAnswer(
     const usersAnswer = answer == null ? word : `${answer} ${word}`;
     console.log(word, answer);
     console.log("user", usersAnswer);
-    const canMakeRequest = await rateLimit(2);
+    const canMakeRequest = await rateLimit(5);
     if (!canMakeRequest) {
       console.log("limiting");
       return res.json({ answer: usersAnswer });
