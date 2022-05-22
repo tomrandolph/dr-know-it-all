@@ -31,7 +31,7 @@ export default async function handleAnswer(
     const canMakeRequest = await rateLimit(5);
     if (!canMakeRequest) {
       console.log("limiting");
-      await redis.set("answer", userAnswer);
+      await redis.set("answer", usersAnswer);
       return res.json({ answer: usersAnswer });
     }
     const question = await redis.get("question");
