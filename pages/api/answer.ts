@@ -2,7 +2,22 @@ import { getClient } from "backend/config/redis";
 import { addToAnswer } from "backend/services/answer";
 import { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handleAnswer(req: NextApiRequest, res: NextApiResponse) {
+// Adds a global rate limit to prevent burning too much usage on openAPI
+async function rateLimit(time: number): Promise<boolean> {
+  const redis = await getClient();
+  const tooSoon = Boolean(await redis.get("limit"));
+  if (tooSoon) {
+    return false;
+  }
+  await redis.setEx("limit", time, "true");
+
+  return true;
+}
+
+export default async function handleAnswer(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const redis = await getClient();
   if (req.method === "PATCH") {
     const { word, version } = req.body;
@@ -11,8 +26,13 @@ export default async function handleAnswer(req: NextApiRequest, res: NextApiResp
       return res.status(409).json({ answer });
     }
     const usersAnswer = answer == null ? word : `${answer} ${word}`;
-    console.log(word, answer)
-    console.log('user', usersAnswer)
+    console.log(word, answer);
+    console.log("user", usersAnswer);
+    const canMakeRequest = await rateLimit(2);
+    if (!canMakeRequest) {
+      console.log("limiting");
+      return res.json({ answer: usersAnswer });
+    }
     const question = await redis.get("question");
     if (!question) {
       throw new Error("Need question");
