@@ -1,4 +1,5 @@
 import { getClient } from "backend/config/redis";
+import { Logger } from "common/logger";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handleQuestion(
@@ -8,7 +9,7 @@ export default async function handleQuestion(
   const redis = await getClient();
   if (req.method === "POST") {
     const { question } = req.body;
-    console.log("question", question);
+    Logger.log("question", question);
     await redis.set("question", question);
     await redis.del("answer");
     return res.json({ question });

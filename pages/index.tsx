@@ -12,13 +12,13 @@ interface Props {
 }
 
 export async function getServerSideProps(): Promise<{ props: Props }> {
-  console.log("Getting props for home page");
+  Logger.log("Getting props for home page");
   const redis = await getClient();
-  console.log("Fetching question and answer");
+  Logger.log("Fetching question and answer");
   const askedQuestion = await redis.get("question");
   const existingAnswer = await redis.get("answer");
-  console.log("Got question:", askedQuestion);
-  console.log("Got answer:", existingAnswer);
+  Logger.log("Got question:", askedQuestion);
+  Logger.log("Got answer:", existingAnswer);
   return {
     props: {
       askedQuestion,

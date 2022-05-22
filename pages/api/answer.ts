@@ -1,5 +1,6 @@
 import { getClient } from "backend/config/redis";
 import { addToAnswer } from "backend/services/answer";
+import { Logger } from "common/logger";
 import { NextApiRequest, NextApiResponse } from "next";
 
 // Adds a global rate limit to prevent burning too much usage on openAI
@@ -26,11 +27,11 @@ export default async function handleAnswer(
       return res.status(409).json({ answer });
     }
     const usersAnswer = answer == null ? word : `${answer} ${word}`;
-    console.log(word, answer);
-    console.log("user", usersAnswer);
+    Logger.log(word, answer);
+    Logger.log("user", usersAnswer);
     const canMakeRequest = await rateLimit(5);
     if (!canMakeRequest) {
-      console.log("limiting");
+      Logger.log("limiting");
       await redis.set("answer", usersAnswer);
       return res.json({ answer: usersAnswer });
     }
@@ -39,7 +40,7 @@ export default async function handleAnswer(
       throw new Error("Need question");
     }
     const data = await addToAnswer(question, usersAnswer);
-    console.log(data);
+    Logger.log(data);
     await redis.set("answer", data.answer);
     return res.json(data);
   }
