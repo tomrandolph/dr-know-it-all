@@ -1,0 +1,9 @@
+.invalid {
+  color: #dd0000
+}
+
+.form span {
+  margin-top: -24px;
+  height: 24px;
+  font-size: small;
+}
