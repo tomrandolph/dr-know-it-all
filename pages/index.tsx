@@ -9,20 +9,27 @@ import { Logger } from "common/logger";
 import { useAddToAnswer } from "client/hooks/use-add-to-answer";
 import { useAskQuestion } from "client/hooks/use-ask-question";
 import { latestQuestion, formatAnswer } from "common/services/question";
+import type { GetServerSideProps } from "next";
+import { SignInModal } from "client/components/sign-in-modal";
+import { useUsername } from "client/hooks/use-username";
 interface Props {
   askedQuestion: string | null;
   existingAnswer: string | null;
 }
 
-export async function getServerSideProps(): Promise<{ props: Props }> {
+export const getServerSideProps: GetServerSideProps = async (
+  context
+): Promise<{
+  props: Props;
+}> => {
+  const cookies = context.req.cookies;
+  Logger.log("cookies", cookies);
   Logger.log("Getting props for home page");
 
   Logger.log("Fetching question and answer");
   const snap = await latestQuestion();
-  Logger.log(`Snap: ${snap}`, snap);
   const doc = snap.docs[0].data();
   const askedQuestion = doc.question;
-  Logger.log("answers,", doc.answers);
   const existingAnswer = formatAnswer(doc.answers);
   Logger.log("Got question:", askedQuestion);
   Logger.log("Got answer:", existingAnswer);
@@ -32,11 +39,12 @@ export async function getServerSideProps(): Promise<{ props: Props }> {
       existingAnswer,
     },
   };
-}
+};
 
 const Home: FC<Props> = ({ askedQuestion, existingAnswer }) => {
   const [changeQuestion, setChangeQuestion] = useState(false);
   const { ask } = useAskQuestion();
+  const [username, setUsername] = useUsername();
   const onAsk = async (question: string) => {
     await ask(question);
     setChangeQuestion(false);
@@ -49,6 +57,7 @@ const Home: FC<Props> = ({ askedQuestion, existingAnswer }) => {
   const { add, compute } = useAddToAnswer(id);
   const currentQuestion = latestQuestion ?? askedQuestion;
   const currentAnswer = latestAnswer ?? existingAnswer;
+
   const onAnswer = async (word: string) => {
     await add(word);
     await compute();
@@ -89,6 +98,7 @@ const Home: FC<Props> = ({ askedQuestion, existingAnswer }) => {
             <AnswerQuestion onAnswer={onAnswer} answer={currentAnswer} />
           </>
         )}
+        {!username && <SignInModal onEnterName={setUsername} />}
       </main>
     </div>
   );

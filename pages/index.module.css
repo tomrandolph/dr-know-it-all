@@ -41,6 +41,15 @@
   flex-direction: column;
   width: 320px;
 }
+.main form span.invalid {
+  color: #dd0000
+}
+
+.main form span {
+  margin-top: -24px;
+  height: 24px;
+  font-size: small;
+}
 .main input[type="text"] {
   padding: 12px 16px;
   border: 1px solid #10a37f;
