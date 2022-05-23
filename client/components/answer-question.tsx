@@ -1,11 +1,5 @@
-import {
-  FC,
-  FormEventHandler,
-  ChangeEventHandler,
-  useState,
-  useRef,
-} from "react";
-import style from "./answer-question.module.css";
+import { FC, FormEventHandler, ChangeEventHandler, useState } from "react";
+// import style from "./answer-question.module.css";
 interface Props {
   onAnswer: (question: string) => Promise<any>;
   answer: string | null;
@@ -32,7 +26,7 @@ export const AnswerQuestion: FC<Props> = ({ answer, onAnswer }) => {
   };
   return (
     <>
-      <form onSubmit={onSubmit} className={style.form}>
+      <form onSubmit={onSubmit}>
         <input
           disabled={disabled}
           type="text"
@@ -42,7 +36,7 @@ export const AnswerQuestion: FC<Props> = ({ answer, onAnswer }) => {
           onChange={onInput}
           autoCapitalize={answer ? "none" : "on"}
         />
-        <span className={style.invalid}>{invalidText}</span>
+        <span className="invalid">{invalidText}</span>
         <input
           type="submit"
           value="Answer Question"

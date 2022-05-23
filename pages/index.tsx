@@ -2,19 +2,27 @@ import { AnswerQuestion } from "client/components/answer-question";
 import { AskQuestion } from "client/components/ask-question";
 import { useLatestQuestion } from "client/hooks/use-latest-question";
 import Head from "next/head";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./index.module.css";
 import type { FC } from "react";
 import { Logger } from "common/logger";
 import { useAddToAnswer } from "client/hooks/use-add-to-answer";
 import { useAskQuestion } from "client/hooks/use-ask-question";
 import { latestQuestion, formatAnswer } from "common/services/question";
+import type { GetServerSideProps } from "next";
+import { SignInModal } from "client/components/sign-in-modal";
 interface Props {
   askedQuestion: string | null;
   existingAnswer: string | null;
 }
 
-export async function getServerSideProps(): Promise<{ props: Props }> {
+export const getServerSideProps: GetServerSideProps = async (
+  context
+): Promise<{
+  props: Props;
+}> => {
+  const cookies = context.req.cookies;
+  Logger.log("cookies", cookies);
   Logger.log("Getting props for home page");
 
   Logger.log("Fetching question and answer");
@@ -32,11 +40,21 @@ export async function getServerSideProps(): Promise<{ props: Props }> {
       existingAnswer,
     },
   };
-}
+};
 
 const Home: FC<Props> = ({ askedQuestion, existingAnswer }) => {
   const [changeQuestion, setChangeQuestion] = useState(false);
   const { ask } = useAskQuestion();
+  const [showModal, setShowModal] = useState(false);
+  useEffect(() => {
+    const hasUsername = document.cookie
+      .split("; ")
+      .some((keyValue) => keyValue.includes("username"));
+    if (!hasUsername) {
+      setShowModal(true);
+      return;
+    }
+  }, []);
   const onAsk = async (question: string) => {
     await ask(question);
     setChangeQuestion(false);
@@ -49,6 +67,10 @@ const Home: FC<Props> = ({ askedQuestion, existingAnswer }) => {
   const { add, compute } = useAddToAnswer(id);
   const currentQuestion = latestQuestion ?? askedQuestion;
   const currentAnswer = latestAnswer ?? existingAnswer;
+  const onEnterName = (name: string) => {
+    document.cookie = `username=${name}`;
+    setShowModal(false);
+  };
   const onAnswer = async (word: string) => {
     await add(word);
     await compute();
@@ -89,6 +111,7 @@ const Home: FC<Props> = ({ askedQuestion, existingAnswer }) => {
             <AnswerQuestion onAnswer={onAnswer} answer={currentAnswer} />
           </>
         )}
+        {showModal && <SignInModal onEnterName={onEnterName} />}
       </main>
     </div>
   );
