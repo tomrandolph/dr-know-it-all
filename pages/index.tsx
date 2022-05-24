@@ -1,12 +1,14 @@
 import { AnswerQuestion } from "client/components/answer-question";
 import { AskQuestion } from "client/components/ask-question";
-import { useQuestion } from "client/hooks/use-question";
+import { useLatestQuestion } from "client/hooks/use-latest-question";
 import Head from "next/head";
 import { useState } from "react";
 import styles from "./index.module.css";
 import type { FC } from "react";
-import { getClient } from "backend/config/redis";
 import { Logger } from "common/logger";
+import { useAddToAnswer } from "client/hooks/use-add-to-answer";
+import { useAskQuestion } from "client/hooks/use-ask-question";
+import { latestQuestion, formatAnswer } from "common/services/question";
 interface Props {
   askedQuestion: string | null;
   existingAnswer: string | null;
@@ -14,10 +16,14 @@ interface Props {
 
 export async function getServerSideProps(): Promise<{ props: Props }> {
   Logger.log("Getting props for home page");
-  const redis = await getClient();
+
   Logger.log("Fetching question and answer");
-  const askedQuestion = await redis.get("question");
-  const existingAnswer = await redis.get("answer");
+  const snap = await latestQuestion();
+  Logger.log(`Snap: ${snap}`, snap);
+  const doc = snap.docs[0].data();
+  const askedQuestion = doc.question;
+  Logger.log("answers,", doc.answers);
+  const existingAnswer = formatAnswer(doc.answers);
   Logger.log("Got question:", askedQuestion);
   Logger.log("Got answer:", existingAnswer);
   return {
@@ -30,20 +36,22 @@ export async function getServerSideProps(): Promise<{ props: Props }> {
 
 const Home: FC<Props> = ({ askedQuestion, existingAnswer }) => {
   const [changeQuestion, setChangeQuestion] = useState(false);
-  const [question, setQuestion] = useState<null | string>(null);
-  const [answer, setAnswer] = useState<null | string>(null);
-  const q = useQuestion();
+  const { ask } = useAskQuestion();
   const onAsk = async (question: string) => {
-    await q.ask(question);
-    setQuestion(question);
-    setAnswer("");
+    await ask(question);
     setChangeQuestion(false);
   };
-  const currentQuestion = question ?? askedQuestion;
-  const currentAnswer = answer ?? existingAnswer;
+  const {
+    question: latestQuestion,
+    answer: latestAnswer,
+    id,
+  } = useLatestQuestion();
+  const { add, compute } = useAddToAnswer(id);
+  const currentQuestion = latestQuestion ?? askedQuestion;
+  const currentAnswer = latestAnswer ?? existingAnswer;
   const onAnswer = async (word: string) => {
-    const newAnswer = await q.answer(currentAnswer, word);
-    setAnswer(newAnswer);
+    await add(word);
+    await compute();
   };
   const asking = !currentQuestion || changeQuestion;
   const answering = !asking;

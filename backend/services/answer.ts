@@ -1,14 +1,11 @@
 import { openai } from "backend/config/openai";
 import { Logger } from "common/logger";
-
-interface AnswerData {
-  done: boolean;
-  answer: string;
-}
-export async function addToAnswer(
+import { Answer } from "common/config/firebase";
+import { Timestamp } from "firebase/firestore";
+export async function computAnswer(
   question: string,
   existingAnswer: string
-): Promise<AnswerData> {
+): Promise<Answer> {
   const prompt = `Provide a silly answer to the following question: ${question}
 ${existingAnswer}`;
   const { data: completion } = await openai.createCompletion(
@@ -16,22 +13,32 @@ ${existingAnswer}`;
     {
       prompt,
       max_tokens: 2,
-      temperature: 0.8,
+      temperature: 1,
     }
   );
   Logger.log(prompt);
   Logger.log(completion);
   const choice = completion.choices?.[0];
-  if (choice == null) {
-    return { answer: existingAnswer, done: true };
+  if (choice?.text == null) {
+    return {
+      spaceBefore: false,
+      answer: ".",
+      addedAt: Timestamp.now(),
+      addedBy: "openai",
+    };
   }
-  const trimmedComputedAnswer = choice.text
-    ?.replace("\n\n", ".")
-    .trim()
-    .split(" ")[0];
-  Logger.log("trimmed", trimmedComputedAnswer);
+  const formatted = choice.text.replace("\n\n", ".");
+  const trimmed = formatted.trimStart();
+  const splits = trimmed.split(" ");
+  let [word] = splits;
+  if (word === ".") {
+    word = trimmed;
+  }
+  Logger.log("computed", word);
   return {
-    answer: `${existingAnswer} ${trimmedComputedAnswer}`,
-    done: false,
+    answer: word,
+    addedBy: "openai",
+    addedAt: Timestamp.now(),
+    spaceBefore: trimmed.length < formatted.length,
   };
 }
