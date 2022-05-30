@@ -8,13 +8,12 @@ import type { FC } from "react";
 import { Logger } from "common/logger";
 import { useAddToAnswer } from "client/hooks/use-add-to-answer";
 import { useAskQuestion } from "client/hooks/use-ask-question";
-import { latestQuestion, formatAnswer } from "common/services/question";
+import { latestQuestion } from "common/services/question";
 import type { GetServerSideProps } from "next";
 import { SignInModal } from "client/components/sign-in-modal";
 import { useUsername } from "client/hooks/use-username";
 interface Props {
   askedQuestion: string | null;
-  existingAnswer: string | null;
 }
 
 export const getServerSideProps: GetServerSideProps = async (
@@ -30,18 +29,16 @@ export const getServerSideProps: GetServerSideProps = async (
   const snap = await latestQuestion();
   const doc = snap.docs[0].data();
   const askedQuestion = doc.question;
-  const existingAnswer = formatAnswer(doc.answers);
   Logger.log("Got question:", askedQuestion);
-  Logger.log("Got answer:", existingAnswer);
+
   return {
     props: {
       askedQuestion,
-      existingAnswer,
     },
   };
 };
 
-const Home: FC<Props> = ({ askedQuestion, existingAnswer }) => {
+const Home: FC<Props> = ({ askedQuestion }) => {
   const [changeQuestion, setChangeQuestion] = useState(false);
   const { ask } = useAskQuestion();
   const [username, setUsername] = useUsername();
@@ -51,12 +48,12 @@ const Home: FC<Props> = ({ askedQuestion, existingAnswer }) => {
   };
   const {
     question: latestQuestion,
-    answer: latestAnswer,
+    answers: latestAnswers,
     id,
   } = useLatestQuestion();
-  const { add, compute } = useAddToAnswer(id);
+  const { add, compute } = useAddToAnswer(id, username);
   const currentQuestion = latestQuestion ?? askedQuestion;
-  const currentAnswer = latestAnswer ?? existingAnswer;
+  const currentAnswers = latestAnswers;
 
   const onAnswer = async (word: string) => {
     await add(word);
@@ -95,7 +92,7 @@ const Home: FC<Props> = ({ askedQuestion, existingAnswer }) => {
             >
               Change Question
             </a>
-            <AnswerQuestion onAnswer={onAnswer} answer={currentAnswer} />
+            <AnswerQuestion onAnswer={onAnswer} answers={currentAnswers} />
           </>
         )}
         {!username && <SignInModal onEnterName={setUsername} />}

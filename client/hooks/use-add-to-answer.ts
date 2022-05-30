@@ -2,13 +2,13 @@ import { Answer } from "common/config/firebase";
 import { addToAnswer } from "common/services/question";
 import { Timestamp } from "firebase/firestore";
 
-export const useAddToAnswer = (questionId?: string) => {
+export const useAddToAnswer = (questionId?: string, username?: string) => {
   const add = (answerText: string) => {
     const answer: Answer = {
       answer: answerText,
       addedAt: Timestamp.now(),
       // TODO integrate with auth to get added by
-      addedBy: "unknown",
+      addedBy: username ?? "unknown",
       spaceBefore: true,
     };
     // todo handle this better
