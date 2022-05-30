@@ -1,5 +1,5 @@
 import { onSnapshot, QuerySnapshot } from "firebase/firestore";
-import { QuestionDoc } from "common/config/firebase";
+import { Answer, QuestionDoc } from "common/config/firebase";
 import { latestQuestion, formatAnswer } from "common/services/question";
 import { useEffect, useState, useCallback } from "react";
 
@@ -9,9 +9,9 @@ export const useLatestQuestion = () => {
     question: string;
     id: string;
   }>(null);
-  const [answer, setAnswer] = useState<null | string>(null);
+  const [answers, setAnswers] = useState<null | Answer[]>(null);
   const setAnswerFromSnap = (snap: QuerySnapshot<QuestionDoc>) =>
-    setAnswer(formatAnswer(snap.docs[0].data().answers));
+    setAnswers(snap.docs[0].data().answers);
   const setQuestionFromSnap = (snap: QuerySnapshot<QuestionDoc>) => {
     const [doc] = snap.docs;
     setQuestion({ question: doc.data().question, id: doc.id });
@@ -29,5 +29,5 @@ export const useLatestQuestion = () => {
     });
     return unsubscribe;
   }, [onChange]);
-  return { loading, question: question?.question, answer, id: question?.id };
+  return { loading, question: question?.question, answers, id: question?.id };
 };

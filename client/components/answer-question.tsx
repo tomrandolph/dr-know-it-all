@@ -1,11 +1,12 @@
 import { FC, FormEventHandler, ChangeEventHandler, useState } from "react";
-// import style from "./answer-question.module.css";
+import { AnswerText } from "./answer-text";
+import { Answer } from "common/config/firebase";
 interface Props {
   onAnswer: (question: string) => Promise<any>;
-  answer: string | null;
+  answers: Answer[] | null;
 }
 
-export const AnswerQuestion: FC<Props> = ({ answer, onAnswer }) => {
+export const AnswerQuestion: FC<Props> = ({ answers, onAnswer }) => {
   const [userAnswer, setUserAnswer] = useState("");
   const [disabled, setDisabled] = useState(false);
   const [invalidText, setInvalidText] = useState<string | null>(null);
@@ -34,7 +35,7 @@ export const AnswerQuestion: FC<Props> = ({ answer, onAnswer }) => {
           placeholder="Your Turn"
           value={userAnswer}
           onChange={onInput}
-          autoCapitalize={answer ? "none" : "on"}
+          autoCapitalize={answers ? "none" : "on"}
         />
         <span className="invalid">{invalidText}</span>
         <input
@@ -43,7 +44,11 @@ export const AnswerQuestion: FC<Props> = ({ answer, onAnswer }) => {
           disabled={disabled || invalidText != null}
         />
       </form>
-      <p>{answer}</p>
+      <div className="container" style={{ display: "block" }}>
+        {answers?.map((answer, i) => (
+          <AnswerText key={i} answer={answer} />
+        ))}
+      </div>
     </>
   );
 };
