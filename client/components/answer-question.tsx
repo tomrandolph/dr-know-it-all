@@ -1,5 +1,5 @@
-import type { FC, FormEventHandler, ChangeEventHandler } from "react";
-import { useState } from "react";
+import type { FormEventHandler, ChangeEventHandler } from "react";
+import { useState, useRef } from "react";
 import { AnswerText } from "./answer-text";
 import type { Answer } from "common/config/firebase";
 interface Props {
@@ -7,16 +7,18 @@ interface Props {
   answers: Answer[] | null;
 }
 
-export const AnswerQuestion: FC<Props> = ({ answers, onAnswer }) => {
+export const AnswerQuestion = ({ answers, onAnswer }: Props) => {
   const [userAnswer, setUserAnswer] = useState("");
   const [disabled, setDisabled] = useState(false);
   const [invalidText, setInvalidText] = useState<string | null>(null);
+  const ref = useRef<HTMLInputElement | null>(null);
   const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     setDisabled(true);
     await onAnswer(userAnswer);
     setUserAnswer("");
     setDisabled(false);
+    ref.current?.focus();
   };
   const onInput: ChangeEventHandler<HTMLInputElement> = (event) => {
     const value = event.target.value;
@@ -30,6 +32,7 @@ export const AnswerQuestion: FC<Props> = ({ answers, onAnswer }) => {
     <>
       <form onSubmit={onSubmit}>
         <input
+          ref={ref}
           disabled={disabled}
           type="text"
           name="Answer"
