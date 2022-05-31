@@ -1,8 +1,9 @@
-import { FC, FormEventHandler, ChangeEventHandler, useState } from "react";
+import type { FC, FormEventHandler, ChangeEventHandler } from "react";
+import { useState } from "react";
 import { AnswerText } from "./answer-text";
-import { Answer } from "common/config/firebase";
+import type { Answer } from "common/config/firebase";
 interface Props {
-  onAnswer: (question: string) => Promise<any>;
+  onAnswer: (question: string) => Promise<unknown>;
   answers: Answer[] | null;
 }
 

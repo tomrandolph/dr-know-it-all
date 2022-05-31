@@ -1,7 +1,7 @@
+import { Timestamp } from "firebase/firestore";
 import { openai } from "backend/config/openai";
 import { Logger } from "common/logger";
-import { Answer } from "common/config/firebase";
-import { Timestamp } from "firebase/firestore";
+import type { Answer } from "common/config/firebase";
 export async function computAnswer(
   question: string,
   existingAnswer: string

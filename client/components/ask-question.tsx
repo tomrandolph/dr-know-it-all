@@ -1,15 +1,16 @@
-import { FC, FormEventHandler, useState } from "react";
+import type { FormEventHandler } from "react";
+import { useState } from "react";
 
 interface Props {
-  onAsk: (question: string) => Promise<any>
+  onAsk: (question: string) => Promise<unknown>;
 }
 
-export const AskQuestion: FC<Props> = ({onAsk}) => {
+export const AskQuestion = ({ onAsk }: Props) => {
   const [question, setQuestion] = useState("");
   const onSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     onAsk(question);
-  }
+  };
   return (
     <form onSubmit={onSubmit}>
       <input

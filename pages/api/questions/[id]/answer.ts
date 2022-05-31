@@ -1,3 +1,4 @@
+import type { NextApiRequest, NextApiResponse } from "next";
 import { computAnswer } from "backend/services/answer";
 import { Logger } from "common/logger";
 import {
@@ -6,7 +7,6 @@ import {
   formatAnswer,
   getQuestion,
 } from "common/services/question";
-import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handleAnswer(
   req: NextApiRequest,

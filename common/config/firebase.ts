@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { FirestoreDataConverter, Timestamp } from "firebase/firestore";
+import type { FirestoreDataConverter, Timestamp } from "firebase/firestore";
 
 export interface Answer {
   addedAt: Timestamp;

@@ -1,7 +1,8 @@
-import { onSnapshot, QuerySnapshot } from "firebase/firestore";
-import { Answer, QuestionDoc } from "common/config/firebase";
-import { latestQuestion, formatAnswer } from "common/services/question";
+import type { QuerySnapshot } from "firebase/firestore";
+import { onSnapshot } from "firebase/firestore";
 import { useEffect, useState, useCallback } from "react";
+import type { Answer, QuestionDoc } from "common/config/firebase";
+import { latestQuestion } from "common/services/question";
 
 export const useLatestQuestion = () => {
   const [loading, setLoading] = useState(true);

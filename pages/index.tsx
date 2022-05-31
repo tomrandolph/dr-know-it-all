@@ -1,15 +1,15 @@
+import Head from "next/head";
+import { useState } from "react";
+import type { FC } from "react";
+import type { GetServerSideProps } from "next";
+import styles from "./index.module.css";
 import { AnswerQuestion } from "client/components/answer-question";
 import { AskQuestion } from "client/components/ask-question";
 import { useLatestQuestion } from "client/hooks/use-latest-question";
-import Head from "next/head";
-import { useState } from "react";
-import styles from "./index.module.css";
-import type { FC } from "react";
 import { Logger } from "common/logger";
 import { useAddToAnswer } from "client/hooks/use-add-to-answer";
 import { useAskQuestion } from "client/hooks/use-ask-question";
 import { latestQuestion } from "common/services/question";
-import type { GetServerSideProps } from "next";
 import { SignInModal } from "client/components/sign-in-modal";
 import { useUsername } from "client/hooks/use-username";
 interface Props {

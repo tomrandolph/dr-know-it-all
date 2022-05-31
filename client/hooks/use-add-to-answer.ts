@@ -1,6 +1,6 @@
-import { Answer } from "common/config/firebase";
-import { addToAnswer } from "common/services/question";
 import { Timestamp } from "firebase/firestore";
+import type { Answer } from "common/config/firebase";
+import { addToAnswer } from "common/services/question";
 
 export const useAddToAnswer = (questionId?: string, username?: string) => {
   const add = (answerText: string) => {

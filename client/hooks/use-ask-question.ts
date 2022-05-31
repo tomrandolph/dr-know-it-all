@@ -1,5 +1,5 @@
-import { firestore, questionConverter } from "common/config/firebase";
 import { addDoc, collection, Timestamp } from "firebase/firestore";
+import { firestore, questionConverter } from "common/config/firebase";
 
 export const useAskQuestion = () => {
   const ask = (question: string) =>
